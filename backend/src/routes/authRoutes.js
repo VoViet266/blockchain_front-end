@@ -1,7 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import { generateNonce, verifySignature } from '../controllers/authController';
-import authMiddleware from '../middleware/authMiddleware';
+import authController from '../controllers/authController.js';
+import authMiddleware from '../middleware/authMiddleware.js';
+const { generateNonce, verifySignature } = authController;
 
 
 router.get('/nonce/:address', generateNonce);

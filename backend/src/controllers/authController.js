@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 const nonceStore = {};
 /// 
 const generateNonce = (req, res) => {
+    // Lấy địa chỉ ví từ params
     const { address } = req.params;
     if (!address) {
         return res.status(400).json({ message: 'Vui lòng cung cấp địa chỉ ví' });
@@ -15,7 +16,7 @@ const generateNonce = (req, res) => {
     const nonce = randomBytes(16).toString('hex');
     const lowerCaseAddress = address.toLowerCase();
 
-    nonceStore[lowerCaseAddress] = nonce;
+    nonceStore[lowerCaseAddress] = nonce;   
 
     res.json({ message: 'Lấy nonce thành công', nonce });
 };
