@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import API from "../services/api.service";
+import API from "../../services/api.service";
 
 const STATUS_OPTIONS = ["PLANTED", "HARVESTED", "PACKAGED", "SHIPPED", "DELIVERED", "SOLD"];
 

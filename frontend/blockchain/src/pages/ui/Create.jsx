@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../services/api.service";
+import API from "../../services/api.service";
 import {
   connectWalletWithEthers,
   getConnectedWalletWithEthers,
   subscribeWalletChanges,
   WALLET_STORAGE_KEY,
-} from "../services/wallet.service";
+} from "../../services/wallet.service";
 
 export default function Create() {
   const [name, setName] = useState("");

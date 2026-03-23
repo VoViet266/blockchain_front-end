@@ -1,5 +1,8 @@
 @import "tailwindcss";
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+
 
 @theme {
   --spacing: 1px;
+  --font-sf-pro: 'SF Pro Display', sans-serif;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import API from "../services/api.service";
+import API from "../../services/api.service";
 
 export default function Product() {
   const { id } = useParams();
