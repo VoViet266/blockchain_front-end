@@ -144,7 +144,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-[12px] mt-[22px]">
               {!wallet && (
                 <button
-                  className="inline-flex items-center justify-center rounded-[14px] px-[18px] py-[12px] text-[15px] font-semibold transition-all duration-200 hover:-translate-y-[2px] bg-gradient-to-br from-[#2f8a62] to-[#1f6647] text-[#f6fff9] shadow-[0_14px_24px_rgba(31,102,71,0.26)] disabled:opacity-70"
+                  className="inline-flex items-center justify-center rounded-[14px] px-[18px] py-[12px] text-[15px] cursor-pointer transition-all duration-200 hover:-translate-y-[2px] bg-gradient-to-br from-[#2f8a62] to-[#1f6647] text-[#f6fff9] shadow-[0_14px_24px_rgba(31,102,71,0.26)] disabled:opacity-70"
                   onClick={connectWallet}
                   disabled={isConnecting}
                 >
