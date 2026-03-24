@@ -62,210 +62,42 @@ export default function Update() {
   };
 
   return (
-    <div className="update-page">
-      <style>
-        {`
-          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap');
+    <div className="min-h-[100vh] p-[24px] font-sf-pro text-[#22362d] bg-[radial-gradient(circle_at_10%_16%,rgba(255,186,95,0.2),transparent_36%),radial-gradient(circle_at_90%_10%,rgba(36,143,104,0.22),transparent_34%),linear-gradient(155deg,#f8f4ea_0%,#edf5e0_56%,#dcede5_100%)]">
+      <div className="max-w-[900px] mx-auto grid gap-[14px] animate-[fade-up_540ms_ease-out]">
+        <section className="bg-white/82 border-[1px] border-[#274c3d]/18 rounded-[24px] p-[24px] shadow-[0_22px_38px_rgba(39,74,59,0.08)]">
 
-          .update-page {
-            min-height: 100vh;
-            padding: 24px;
-            background:
-              radial-gradient(circle at 10% 16%, rgba(255, 186, 95, 0.2), transparent 36%),
-              radial-gradient(circle at 90% 10%, rgba(36, 143, 104, 0.22), transparent 34%),
-              linear-gradient(155deg, #f8f4ea 0%, #edf5e0 56%, #dcede5 100%);
-            color: #22362d;
-            font-family: "Space Grotesk", sans-serif;
-          }
-
-          .update-shell {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            gap: 14px;
-            animation: fade-up 540ms ease-out;
-          }
-
-          .update-card {
-            background: rgba(255, 255, 255, 0.82);
-            border: 1px solid rgba(39, 76, 61, 0.18);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 22px 38px rgba(39, 74, 59, 0.08);
-          }
-
-          .header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-          }
-
-          .title {
-            margin: 0;
-            font-family: "Fraunces", serif;
-            font-size: clamp(30px, 4vw, 44px);
-            color: #17382b;
-          }
-
-          .id-pill {
-            border-radius: 999px;
-            border: 1px solid rgba(36, 75, 60, 0.25);
-            background: #f6fbf7;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #2f5b4b;
-          }
-
-          .sub {
-            margin: 10px 0 0;
-            color: #3c5d4f;
-            line-height: 1.6;
-          }
-
-          .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 18px;
-          }
-
-          .field {
-            display: grid;
-            gap: 6px;
-          }
-
-          .label {
-            font-size: 13px;
-            color: #365748;
-            font-weight: 600;
-          }
-
-          .input,
-          .select,
-          .file {
-            border: 1px solid rgba(40, 82, 66, 0.24);
-            border-radius: 12px;
-            background: #fff;
-            color: #1f392f;
-            font: inherit;
-          }
-
-          .input,
-          .select {
-            padding: 12px;
-          }
-
-          .file {
-            padding: 9px;
-          }
-
-          .full {
-            grid-column: 1 / -1;
-          }
-
-          .message {
-            margin-top: 14px;
-            border-radius: 12px;
-            border: 1px solid #d6e8de;
-            background: #f6fbf8;
-            color: #335b4b;
-            padding: 12px;
-            font-size: 14px;
-          }
-
-          .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-          }
-
-          .btn {
-            border: none;
-            border-radius: 14px;
-            padding: 11px 16px;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.18s ease;
-          }
-
-          .btn:hover {
-            transform: translateY(-2px);
-          }
-
-          .btn-primary {
-            background: linear-gradient(135deg, #2a875f, #1f6648);
-            color: #effff6;
-          }
-
-          .btn-ghost {
-            background: #f7efe0;
-            color: #2d5644;
-            border: 1px solid rgba(34, 72, 58, 0.35);
-          }
-
-          @keyframes fade-up {
-            from {
-              opacity: 0;
-              transform: translateY(14px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          @media (max-width: 700px) {
-            .update-page {
-              padding: 16px;
-            }
-
-            .update-card {
-              border-radius: 18px;
-              padding: 18px;
-            }
-
-            .row {
-              grid-template-columns: 1fr;
-            }
-
-            .actions .btn {
-              width: 100%;
-              text-align: center;
-            }
-          }
-        `}
-      </style>
-
-      <div className="update-shell">
-        <section className="update-card">
-          <div className="header-row">
-            <h1 className="title">Update Product</h1>
-            <span className="id-pill">Product ID: #{titleId}</span>
+          <div className="flex items-center justify-between gap-[10px] flex-wrap">
+            <h1 className="m-0 text-[30px] md:text-[4vw] lg:text-[44px] text-[#17382b] font-bold">
+              Cập nhật sản phẩm
+            </h1>
+            <span className="rounded-[999px] border-[1px] border-[#244b3c]/25 bg-[#f6fbf7] px-[12px] py-[8px] text-[13px] text-[#2f5b4b]">
+              Mã sản phẩm: #{titleId}
+            </span>
           </div>
 
-          <p className="sub">Thêm phiên bản mới với trạng thái mới và ảnh minh chứng để tiếp tục hành trình truy xuất.</p>
+          <p className="m-0 mt-[10px] text-[#3c5d4f] leading-[1.6]">
+            Thêm phiên bản mới với trạng thái mới và ảnh minh chứng để tiếp tục hành trình truy xuất.
+          </p>
 
           <form onSubmit={handleSubmit}>
-            <div className="row">
-              <label className="field">
-                <span className="label">Product ID</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[12px] mt-[18px]">
+              <label className="grid gap-[6px]">
+                <span className="text-[13px] text-[#365748] font-semibold">Mã sản phẩm</span>
                 <input
-                  className="input"
+                  className="border-[1px] border-[#285242]/24 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f]"
                   value={productId}
                   onChange={(event) => setProductId(event.target.value)}
                   placeholder="VD: 1"
                 />
               </label>
 
-              <label className="field">
-                <span className="label">Status</span>
-                <select className="select" value={status} onChange={(event) => setStatus(event.target.value)}>
+              <label className="grid gap-[6px]">
+                <span className="text-[13px] text-[#365748] font-semibold">Trạng thái</span>
+                <select
+                  className="border-[1px] border-[#285242]/24 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] appearance-none"
+                  value={status}
+                  onChange={(event) => setStatus(event.target.value)}
+                >
                   {STATUS_OPTIONS.map((item) => (
                     <option key={item} value={item}>
                       {item}
@@ -274,30 +106,61 @@ export default function Update() {
                 </select>
               </label>
 
-              <label className="field full">
-                <span className="label">Version Image</span>
-                <input
-                  className="file"
-                  type="file"
-                  accept="image/*"
-                  onChange={(event) => setImage(event.target.files?.[0] || null)}
-                />
-              </label>
+              <div className="grid gap-[6px] md:col-span-2">
+                <span className="text-[13px] text-[#365748] font-semibold">Hình ảnh phiên bản</span>
+                <label
+                  className={`relative flex flex-col items-center justify-center border-[2px] border-dashed rounded-[18px] p-[28px] cursor-pointer transition-all duration-180 
+                ${image ? 'border-[#2a875f] bg-[#f0f9f4]' : 'border-[#295242]/30 bg-white/50 hover:bg-white/80 hover:border-[#2a875f]/50'}`}
+                  onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('bg-[#f0f9f4]', 'border-[#2a875f]'); }}
+                  onDragLeave={(e) => { e.preventDefault(); if (!image) e.currentTarget.classList.remove('bg-[#f0f9f4]', 'border-[#2a875f]'); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) setImage(file);
+                  }}
+                >
+                  <input
+                    className="hidden"
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => setImage(event.target.files?.[0] || null)}
+                  />
+                  <div className="text-center">
+                    {image ? (
+                      <div className="flex flex-col items-center gap-[4px]">
+                        <span className="text-[#2a875f] font-bold text-[15px]">✓ Đã chọn file thành công</span>
+                        <span className="text-[#1f392f] text-[14px] break-all">{image.name}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="m-0 text-[14px] text-[#1f392f] font-medium">Kéo thả ảnh minh chứng hoặc nhấp để chọn</p>
+                        <p className="mt-[4px] mb-0 text-[12px] text-[#3a5b4d] opacity-70">Hỗ trợ: JPG, PNG, WEBP</p>
+                      </>
+                    )}
+                  </div>
+                </label>
+              </div>
             </div>
 
-            <div className="message">{message}</div>
+            <div className="mt-[14px] rounded-[12px] border-[1px] border-[#d6e8de] bg-[#f6fbf8] text-[#335b4b] p-[12px] text-[14px]">
+              {message}
+            </div>
 
-            <div className="actions">
-              <Link className="btn btn-ghost" to="/">
+            <div className="flex justify-end gap-[10px] mt-[16px] flex-wrap">
+              <Link className="w-full md:w-auto inline-flex items-center justify-center rounded-[14px] px-[16px] py-[11px] text-[14px] transition-transform duration-180 hover:-translate-y-[2px] bg-[#f7efe0] text-[#2d5644] border-[1px] border-[#22483a]/35 no-underline" to="/">
                 Về trang chủ
               </Link>
               {productId && (
-                <Link className="btn btn-ghost" to={`/product/${productId}`}>
+                <Link className="w-full md:w-auto inline-flex items-center justify-center rounded-[14px] px-[16px] py-[11px] text-[14px] transition-transform duration-180 hover:-translate-y-[2px] bg-[#f7efe0] text-[#2d5644] border-[1px] border-[#22483a]/35 no-underline" to={`/product/${productId}`}>
                   Xem chi tiết sản phẩm
                 </Link>
               )}
-              <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Đang cập nhật..." : "Update Product"}
+              <button
+                className="w-full md:w-auto inline-flex items-center cursor-pointer justify-center rounded-[14px] px-[16px] py-[11px] text-[14px] transition-transform duration-180 hover:-translate-y-[2px] bg-gradient-to-br from-[#2a875f] to-[#1f6648] text-[#effff6] shadow-[0_12px_20px_rgba(31,102,72,0.23)] disabled:opacity-70"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Đang cập nhật..." : "Cập nhật"}
               </button>
             </div>
           </form>
