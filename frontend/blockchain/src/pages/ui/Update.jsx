@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { updateProductContract } from "../../services/wallet.service";
+import { updateProduct } from "../../services/api.service";
 
 const STATUS_OPTIONS = [
   { value: "PLANTED", label: "Đã trồng" },
@@ -48,18 +50,19 @@ export default function Update() {
       setIsSubmitting(true);
       setMessage("Đang cập nhật sản phẩm lên hệ thống...");
 
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/update/`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await updateProduct(formData);
+      const { uuid, hash } = response;
 
-      setMessage("Cập nhật sản phẩm thành công.");
+      setMessage("Đang yêu cầu ký giao dịch...");
+      const txHash = await updateProductContract(uuid, hash);
+      setMessage(`Cập nhật sản phẩm thành công! Tx: ${txHash.slice(0, 10)}...`);
       setImage(null);
-      navigate(`/product/${productId.trim()}`);
+      setTimeout(() => {
+        navigate(`/product/${productId.trim()}`);
+      }, 2000);
     } catch (error) {
       if (!error?.response) {
-        setMessage("Không kết nối được backend. Hãy kiểm tra Django server.");
+        setMessage("Không kết nối được backend.");
       } else {
         setMessage(error?.response?.data?.detail || "Cập nhật thất bại.");
       }

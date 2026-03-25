@@ -10,25 +10,101 @@ const RPC_URL = process.env.RPC_URL;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 
 let contract = null;
-let signer = null;
+
 //Đọc file abi.json
 const abiPath = path.join(process.cwd(), "abi.json");
 const ABI = JSON.parse(fs.readFileSync(abiPath, "utf8"));
 
 const initBlockchain = () => {
   try {
-    if (!process.env.ADMIN_PRIVATE_KEY) {
-      console.warn(
-        "WARNING: ADMIN_PRIVATE_KEY is not set in .env. Blockchain writing will fail.",
-      );
-      return;
-    }
     const provider = new ethers.JsonRpcProvider(RPC_URL);
-    signer = new ethers.Wallet(process.env.ADMIN_PRIVATE_KEY, provider);
-    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+    contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+
+    listenToEvents();
+    console.log("Blockchain service initialized and listener started.");
   } catch (error) {
     console.error("Blockchain init error:", error);
   }
+};
+
+const listenToEvents = () => {
+  if (!contract) return;
+
+  contract.on("ProductAdded", async (uuid, owner, hash, event) => {
+    try {
+      console.log(
+        `[EVENT] ProductAdded: uuid=${uuid}, owner=${owner}, hash=${hash}`,
+      );
+
+      const txHash = event.log.transactionHash;
+
+      // Tìm sản phẩm theo id (uuid trên blockchain)
+      const productId = uuid;
+
+      const product = await Product.findByPk(productId);
+      if (product) {
+        // Cập nhật ví chủ sở hữu từ sự kiện
+        await product.update({ owner_wallet: owner });
+
+        // Cập nhật tx_hash cho version tương ứng
+        await ProductVersion.update(
+          { tx_hash: txHash },
+          {
+            where: {
+              product_id: productId,
+              hash: hash,
+            },
+          },
+        );
+        console.log(`Updated Product ${productId} with txHash ${txHash}`);
+      } else {
+        console.warn(
+          `Product ${productId} not found in DB when event received.`,
+        );
+      }
+    } catch (error) {
+      console.error("Error handling ProductAdded event:", error);
+    }
+  });
+
+  contract.on("ProductUpdated", async (uuid, newHash, event) => {
+    try {
+      console.log(`ProductUpdated: uuid=${uuid}, newHash=${newHash}`);
+      const txHash = event.log.transactionHash;
+      const productId = uuid;
+
+      await ProductVersion.update(
+        { tx_hash: txHash },
+        {
+          where: {
+            product_id: productId,
+            hash: newHash,
+          },
+        },
+      );
+      console.log(`Updated ProductVersion ${productId} with txHash ${txHash}`);
+    } catch (error) {
+      console.error("Error handling ProductUpdated event:", error);
+    }
+  });
+
+  contract.on(
+    "OwnershipTransferred",
+    async (uuid, oldOwner, newOwner, event) => {
+      try {
+        console.log(`OwnershipTransferred: uuid=${uuid}, newOwner=${newOwner}`);
+        const productId = uuid.startsWith("0x") ? uuid.slice(2) : uuid;
+
+        const product = await Product.findByPk(productId);
+        if (product) {
+          await product.update({ owner_wallet: newOwner });
+          console.log(`Updated Product ${productId} owner to ${newOwner}`);
+        }
+      } catch (error) {
+        console.error("Error handling OwnershipTransferred event:", error);
+      }
+    },
+  );
 };
 
 export const addProductOnChain = async (productData, file) => {
@@ -47,6 +123,7 @@ export const addProductOnChain = async (productData, file) => {
     image = uploadResult.ipfsUrl;
   }
 
+  // Tạo sản phẩm trong DB trước (Pending)
   const product = await Product.create({
     name,
     origin,
@@ -56,13 +133,6 @@ export const addProductOnChain = async (productData, file) => {
   try {
     const data = name + origin + status;
     const hashValue = crypto.createHash("sha256").update(data).digest("hex");
-    const productIdOnChain = product.id.startsWith("0x")
-      ? product.id
-      : "0x" + product.id;
-
-    const tx = await contract.addProduct(productIdOnChain, hashValue);
-    const receipt = await tx.wait();
-    const txHash = receipt.hash;
 
     await ProductVersion.create({
       product_id: product.id,
@@ -70,29 +140,19 @@ export const addProductOnChain = async (productData, file) => {
       status: status,
       image: image,
       hash: hashValue,
-      tx_hash: txHash,
+      tx_hash: null,
     });
 
-    return { success: true, tx_hash: txHash, product_id: product.id };
+    return {
+      success: true,
+      uuid: product.id,
+      hash: hashValue,
+      product_id: product.id,
+    };
   } catch (error) {
-    console.error(
-      "Lỗi khi thêm lên Blockchain:",
-      error.shortMessage || error.message,
-    );
-
-    // Xóa bản ghi trong DB nếu blockchain thất bại để đảm bảo tính nhất quán (Optional)
+    console.error("Lỗi khi chuẩn bị dữ liệu Blockchain:", error.message);
     await product.destroy();
-
-    // Throw a enhanced error to be handled by controller
-    const enhancedError = new Error(error.message);
-    if (error.reason || (error.message && error.message.includes("reverted"))) {
-      enhancedError.status = 409;
-      enhancedError.detail =
-        error.reason || "Sản phẩm đã tồn tại trên hệ thống";
-    } else {
-      enhancedError.status = 500;
-    }
-    throw enhancedError;
+    throw error;
   }
 };
 
@@ -118,26 +178,14 @@ export const updateProductOnChain = async (body, file) => {
       throw new Error("Product not found");
     }
 
-    // Lấy version lớn nhất
     const latestVersion = await ProductVersion.findOne({
       where: { product_id: product.id },
       order: [["version", "DESC"]],
     });
     const nextVersion = latestVersion ? latestVersion.version + 1 : 1;
 
-    // Băm dữ liệu
     const data = product.name + product.origin + status;
     const hashValue = crypto.createHash("sha256").update(data).digest("hex");
-
-    // Convert UUID hex to numeric-compatible format
-    const productIdOnChain = product.id.startsWith("0x")
-      ? product.id
-      : "0x" + product.id;
-
-    let tx_hash;
-
-    const tx = await contract.updateProduct(productIdOnChain, hashValue);
-    const receipt = await tx.wait();
 
     const productVersion = await ProductVersion.create({
       product_id: product.id,
@@ -145,12 +193,17 @@ export const updateProductOnChain = async (body, file) => {
       status: status,
       image: image,
       hash: hashValue,
-      tx_hash: receipt.hash,
+      tx_hash: null,
     });
 
-    return { success: true, tx_hash: receipt.hash, product_version: productVersion };
+    return {
+      success: true,
+      uuid: product.id,
+      hash: hashValue,
+      product_version: productVersion,
+    };
   } catch (error) {
-    console.error("Error updating product:", error);
+    console.error("Error updating product data:", error);
     throw error;
   }
 };
@@ -182,7 +235,6 @@ export const getMyProductsOnChain = async (wallet) => {
     order: [[{ model: ProductVersion, as: "versions" }, "version", "DESC"]],
   });
 
-  // Transform the payload to have `latest_version` on top-level
   const result = products.map((p) => {
     const productPlain = p.get({ plain: true });
     const latestVersion =

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { getProductDetail } from "../../services/api.service";
 
 export default function Product() {
   const { id } = useParams();
@@ -40,8 +41,8 @@ export default function Product() {
       try {
         setLoading(true);
         setError("");
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/${id}/`);
-        setData(response.data);
+        const response = await getProductDetail(id);
+        setData(response);
       } catch (fetchError) {
         setError(fetchError?.response?.data?.detail || "Không thể tải thông tin sản phẩm.");
       } finally {
@@ -69,12 +70,48 @@ export default function Product() {
     link.rel = "noreferrer";
     link.click();
   };
+const printQr = () => {
+  if (!id || !qrImageUrl) return;
 
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
+  const iframeDoc = iframe.contentWindow.document;
+
+  iframeDoc.open();
+  iframeDoc.write(`
+    <html>
+      <head>
+        <title>Print QR</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+          }
+          img {
+            max-width: 300px;
+          }
+        </style>
+      </head>
+      <body>
+        <img src="${qrImageUrl}" onload="window.print();" />
+      </body>
+    </html>
+  `);
+  iframeDoc.close();
+
+    iframe.contentWindow.onafterprint = () => {
+    document.body.removeChild(iframe);
+  };
+};
   return (
     <div className="min-h-[100vh] p-[24px] font-sf-pro text-[#20342b] overflow-x-hidden bg-[radial-gradient(circle_at_12%_14%,rgba(255,184,91,0.2),transparent_34%),radial-gradient(circle_at_88%_10%,rgba(46,143,106,0.22),transparent_35%),linear-gradient(155deg,#f7f3e9_0%,#eef5e2_53%,#e0efe5_100%)]">
       <div className="max-w-[1080px] mx-auto grid gap-[16px] animate-[fade-up_600ms_ease-out]">
 
-        {/* Top Row */}
+     
         <div className="flex items-center justify-between gap-[12px] flex-wrap">
           <h1 className="m-0 text-[30px] md:text-[4vw] lg:text-[48px] leading-[1.08] font-bold">
             Thông tin sản phẩm
@@ -89,9 +126,7 @@ export default function Product() {
             <Link className="rounded-full px-[14px] py-8 text-[13px] no-underline border-[1px] border-[#1f4336]/35 bg-[#f8f0e3] text-[#274c3d] transition-transform duration-180 hover:-translate-y-[2px]" to={`/update/${id}`}>
               Cập nhật sản phẩm
             </Link>
-            <Link className="rounded-full px-[14px] py-8 text-[13px] no-underline border-[1px] border-[#1f4336]/35 bg-[#f8f0e3] text-[#274c3d] transition-transform duration-180 hover:-translate-y-[2px]" to="/create">
-              Tao sản phẩm mới
-            </Link>
+            
           </div>
         </div>
 
@@ -130,10 +165,13 @@ export default function Product() {
                   </div>
 
                   <div className="min-w-0">
-                    <p className="m-0 font-mono text-[12px] text-[#2d5646] break-all">{traceUrl}</p>
+                    <Link className="m-0 font-mono text-[12px] text-[#2d5646] break-all" to={traceUrl}>{traceUrl}</Link>
                     <div className="grid grid-cols-2 gap-[8px] mt-[8px]">
                       <button className="border-[1px] border-[#1f4336]/35 bg-[#f8f0e3] text-[#274c3d] rounded-[10px] px-[12px] py-[8px] text-[13px] cursor-pointer text-center" type="button" onClick={downloadQr}>
                         Tải QR
+                      </button>
+                      <button className="border-[1px] border-[#1f4336]/35 bg-[#f8f0e3] text-[#274c3d] rounded-[10px] px-[12px] py-[8px] text-[13px] cursor-pointer text-center" type="button" onClick={printQr}>
+                        In QR
                       </button>
                     </div>
                   </div>
@@ -141,7 +179,6 @@ export default function Product() {
               </section>
             </article>
 
-            {/* Right Column: Version History */}
             <article className="bg-white/80 border-[1px] border-[#26493a]/16 rounded-[22px] p-[20px] shadow-[0_20px_38px_rgba(39,73,58,0.08)]">
               <h2 className="mt-0 text-[24px] font-bold mb-[16px]">Lịch sử phiên bản</h2>
               {!data.versions?.length ? (
