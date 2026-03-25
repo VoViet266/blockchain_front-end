@@ -15,7 +15,7 @@ export default function ProductScanByUser() {
 
   const traceUrl = useMemo(() => {
     if (!id) return "";
-    if (typeof window === "undefined") return `/product/${id}`;
+    if (typeof window === "undefined") return `/product-scan-by-user/${id}`;
     return `${window.location.origin}/product-scan-by-user/${id}`;
   }, [id]);
   const status = {
