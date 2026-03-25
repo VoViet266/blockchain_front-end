@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import API from "../../services/api.service";
+import { Link, useNavigate } from "react-router-dom";
+import API, { createProduct } from "../../services/api.service";
 import {
   connectWalletWithEthers,
   getConnectedWalletWithEthers,
   subscribeWalletChanges,
+  addProductContract,
   WALLET_STORAGE_KEY,
 } from "../../services/wallet.service";
 import axios from "axios";
 
 export default function Create() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [origin, setOrigin] = useState("");
   const [image, setImage] = useState(null);
@@ -55,7 +57,7 @@ export default function Create() {
 
         setWallet("");
         localStorage.removeItem(WALLET_STORAGE_KEY);
-      } catch (_error) {
+      } catch  {
         const cachedWallet = localStorage.getItem(WALLET_STORAGE_KEY);
         if (cachedWallet) {
           setWallet(cachedWallet);
@@ -65,7 +67,7 @@ export default function Create() {
 
     const unsubscribe = subscribeWalletChanges((account) => {
       if (account) {
-        setWallet(account);
+        setWallet(account); 
         localStorage.setItem(WALLET_STORAGE_KEY, account);
         setStatus("Đã cập nhật ví MetaMask.");
       } else {
@@ -105,24 +107,23 @@ export default function Create() {
 
     try {
       setIsSubmitting(true);
-      setStatus("Đang tạo sản phẩm và ghi dữ liệu lên blockchain...");
+      setStatus("Đang tải dữ liệu và ảnh lên máy chủ...");
+      const response = await createProduct(formData);
 
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/create/`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
+      const { uuid, hash } = response;
+      setStatus("Đang yêu cầu ký giao dịch...");
+      const txHash = await addProductContract(uuid, hash);
 
-      setStatus("Tạo sản phẩm thành công.");
+      setStatus(`Tạo sản phẩm thành công! Tx: ${txHash.slice(0, 10)}...`);
       setName("");
       setOrigin("");
       setImage(null);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error) {
-      if (!error?.response) {
+      console.error("Lỗi tạo sản phẩm:", error);
+      if (!error?.response && !error.message?.includes("MetaMask")) {
         setStatus(
           "Không kết nối được backend. Hãy chạy Django server và thử lại.",
         );
@@ -130,13 +131,14 @@ export default function Create() {
         setStatus(
           error?.response?.data?.detail ||
             error?.message ||
-            "Tạo sản phẩm thất bại.",
+            "Thao tác thất bại.",
         );
       }
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="min-h-[100vh] p-[24px] font-sf-pro text-[#23372e] bg-[radial-gradient(circle_at_85%_12%,rgba(41,153,104,0.2),transparent_36%),radial-gradient(circle_at_8%_20%,rgba(255,191,92,0.2),transparent_34%),linear-gradient(150deg,#f7f3e6_0%,#edf4df_52%,#e0efe7_100%)]">

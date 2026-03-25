@@ -6,7 +6,7 @@ export default function ProductScanByUser() {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); 
 
   const latestVersion = useMemo(() => {
     if (!data?.versions?.length) return null;
@@ -40,7 +40,7 @@ export default function ProductScanByUser() {
       try {
         setLoading(true);
         setError("");
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/product/${id}/`);
+        const response = await getProductDetail(id);
         setData(response.data);
       } catch (fetchError) {
         setError(fetchError?.response?.data?.detail || "Không thể tải thông tin sản phẩm.");
@@ -60,15 +60,7 @@ export default function ProductScanByUser() {
     return imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
   };
 
-  const downloadQr = () => {
-    if (!id || !qrImageUrl) return;
-    const link = document.createElement("a");
-    link.href = qrImageUrl;
-    link.download = `product-${id}-qr.png`;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.click();
-  };
+
 
   return (
     <div className="min-h-[100vh] p-[24px] font-sf-pro text-[#20342b] overflow-x-hidden bg-[radial-gradient(circle_at_12%_14%,rgba(255,184,91,0.2),transparent_34%),radial-gradient(circle_at_88%_10%,rgba(46,143,106,0.22),transparent_35%),linear-gradient(155deg,#f7f3e9_0%,#eef5e2_53%,#e0efe5_100%)]">

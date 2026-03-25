@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../services/api.service";
+import API, { getProducts } from "../../services/api.service";
 import {
   connectWalletWithEthers,
   getConnectedWalletWithEthers,
@@ -60,7 +60,7 @@ export default function Home() {
 
         setWallet("");
         localStorage.removeItem(WALLET_STORAGE_KEY);
-      } catch (_error) {
+      } catch {
         const cachedWallet = localStorage.getItem(WALLET_STORAGE_KEY);
         if (cachedWallet) {
           setWallet(cachedWallet);
@@ -98,13 +98,11 @@ export default function Home() {
       try {
         setIsLoadingProducts(true);
         setProductsError("");
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/`, {
-          params: { wallet },
-        });
-        setProducts(response.data || []);
+        const response = await getProducts(wallet);
+        setProducts(response || []);
       } catch (error) {
         if (!error?.response) {
-          setProductsError("Không kết nối được backend. Kiểm tra server Django đang chạy tại 127.0.0.1:8000.");
+          setProductsError("Không kết nối được backend");
         } else {
           setProductsError(error?.response?.data?.detail || "Không tải được danh sách sản phẩm.");
         }
@@ -120,7 +118,7 @@ export default function Home() {
     if (!imagePath) return "";
     try {
       return new URL(imagePath, API.defaults.baseURL).toString();
-    } catch (_e) {
+    } catch {
       return imagePath;
     }
   };
