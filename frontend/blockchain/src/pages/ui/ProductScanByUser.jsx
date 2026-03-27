@@ -134,7 +134,7 @@ export default function ProductScanByUser() {
         </div>
       </div>
 
-      <div className="max-w-1200 mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 mt-20">
+      <div className="max-w-1200 flex justify-center mx-auto px-6 grid-cols-1 lg:grid-cols-[1fr_380px] gap-10 mt-20">
         {/* Main Content: The Story */}
         <main className="space-y-8">
           {loading && (
