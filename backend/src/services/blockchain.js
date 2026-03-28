@@ -142,6 +142,7 @@ export const addProductOnChain = async (productData, file) => {
     farm_name,
     location,
     producer,
+    plant_area_id,
     owner_wallet: wallet,
   });
 
@@ -161,6 +162,8 @@ export const addProductOnChain = async (productData, file) => {
       image: image,
       hash: hashValue,
       tx_hash: null,
+      temperature,
+      humidity,
     });
 
     return {
