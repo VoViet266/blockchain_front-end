@@ -105,7 +105,7 @@ const listenToEvents = () => {
   );
 };
 
-export const addProductOnChain = async (productData, file) => {
+export const addProduct = async (productData, file) => {
   const {
     name,
     origin,
@@ -114,9 +114,12 @@ export const addProductOnChain = async (productData, file) => {
     variety,
     farm_name,
     location,
-    producer, // origin fields
+    producer,
     description,
-    additional_info, // version info
+    additional_info,
+    temperature,
+    humidity, // new fields
+    plant_area_id,
   } = productData;
 
   if (wallet == null) {
@@ -149,7 +152,7 @@ export const addProductOnChain = async (productData, file) => {
   try {
     // Stringify additional info for hash calculation
     const infoStr = additional_info ? JSON.stringify(additional_info) : "";
-    const data = name + origin + status + (description || "") + infoStr;
+    const data = productData + infoStr;
     const hashValue = crypto.createHash("sha256").update(data).digest("hex");
 
     await ProductVersion.create({
@@ -179,7 +182,7 @@ export const addProductOnChain = async (productData, file) => {
   }
 };
 
-export const updateProductOnChain = async (body, file) => {
+export const addVerProduct = async (body, file) => {
   try {
     const { id, status, description, location, additional_info } = body;
 
@@ -207,7 +210,6 @@ export const updateProductOnChain = async (body, file) => {
     });
     const nextVersion = latestVersion ? latestVersion.version + 1 : 1;
 
-    // Stringify additional info for hash calculation
     const infoStr = additional_info ? JSON.stringify(additional_info) : "";
     const data =
       product.name + product.origin + status + (description || "") + infoStr;

@@ -1,13 +1,13 @@
 import {
-  addProductOnChain,
-  updateProductOnChain,
+  addProduct,
+  addVerProduct,
   getProductHistoryOnChain,
   getMyProductsOnChain,
 } from "../services/blockchain.js";
 
 export const createProduct = async (req, res) => {
   try {
-    const result = await addProductOnChain(req.body, req.file);
+    const result = await addProduct(req.body, req.file);
     res.status(200).json(result);
   } catch (error) {
     console.error("Error creating product:", error);
@@ -21,7 +21,7 @@ export const createProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   try {
-    const result = await updateProductOnChain(req.body, req.file);
+    const result = await addVerProduct(req.body, req.file);
     res.status(200).json(result);
   } catch (error) {
     console.error("Error updating product:", error);
@@ -35,7 +35,7 @@ export const updateProduct = async (req, res) => {
 
 export const getProductHistory = async (req, res) => {
   try {
-    const product = await getProductHistoryOnChain(req.params.id);
+    const product = await   getProductHistoryOnChain(req.params.id);
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }

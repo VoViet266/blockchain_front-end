@@ -15,11 +15,11 @@ const ProductVersion = sequelize.define(
       allowNull: false,
     },
     temperature: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     humidity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     status: {

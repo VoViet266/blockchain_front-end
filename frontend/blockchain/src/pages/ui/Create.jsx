@@ -133,9 +133,7 @@ export default function Create() {
       const txHash = await addProductContract(uuid, hash);
       const receipt = await txHash.wait();
       if (receipt.status === 1) {
-      
       }
-
 
       setStatus(`Tạo sản phẩm thành công! TxHash: ${txHash.slice(0, 10)}...`);
       setName("");
@@ -289,7 +287,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Nhiệt độ (°C)</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Nhiệt độ (°C)
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={temperature}
@@ -299,17 +299,21 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Độ ẩm (%)</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Độ ẩm (%)
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={humidity}
-                    onChange={(e) =>setHumidity(e.target.value)}
+                    onChange={(e) => setHumidity(e.target.value)}
                     placeholder="VD: 74"
                   />
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Mã số vùng trồng *</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Mã số vùng trồng *
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={plantAreaId}

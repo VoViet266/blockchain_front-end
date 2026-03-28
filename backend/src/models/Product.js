@@ -20,13 +20,13 @@ const Product = sequelize.define(
     },
     plant_area_id: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     variety: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    
+
     farm_name: {
       type: DataTypes.STRING,
       allowNull: true,
