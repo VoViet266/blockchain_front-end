@@ -32,9 +32,7 @@ const listenToEvents = () => {
 
   contract.on("ProductAdded", async (uuid, owner, hash, event) => {
     try {
-      console.log(
-        `[EVENT] ProductAdded: uuid=${uuid}, owner=${owner}, hash=${hash}`,
-      );
+      console.log(`ProductAdded: uuid=${uuid}, owner=${owner}, hash=${hash}`);
 
       const txHash = event.log.transactionHash;
 
@@ -108,10 +106,17 @@ const listenToEvents = () => {
 };
 
 export const addProductOnChain = async (productData, file) => {
-  const { 
-    name, origin, wallet, // core
-    product_type, variety, farm_name, location, producer, // origin fields
-    description, additional_info // version info
+  const {
+    name,
+    origin,
+    wallet, // core
+    product_type,
+    variety,
+    farm_name,
+    location,
+    producer, // origin fields
+    description,
+    additional_info, // version info
   } = productData;
 
   if (wallet == null) {
@@ -201,7 +206,8 @@ export const updateProductOnChain = async (body, file) => {
 
     // Stringify additional info for hash calculation
     const infoStr = additional_info ? JSON.stringify(additional_info) : "";
-    const data = product.name + product.origin + status + (description || "") + infoStr;
+    const data =
+      product.name + product.origin + status + (description || "") + infoStr;
     const hashValue = crypto.createHash("sha256").update(data).digest("hex");
 
     const productVersion = await ProductVersion.create({

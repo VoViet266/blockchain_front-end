@@ -62,7 +62,7 @@ export default function Create() {
 
         setWallet("");
         localStorage.removeItem(WALLET_STORAGE_KEY);
-      } catch  {
+      } catch {
         const cachedWallet = localStorage.getItem(WALLET_STORAGE_KEY);
         if (cachedWallet) {
           setWallet(cachedWallet);
@@ -72,7 +72,7 @@ export default function Create() {
 
     const unsubscribe = subscribeWalletChanges((account) => {
       if (account) {
-        setWallet(account); 
+        setWallet(account);
         localStorage.setItem(WALLET_STORAGE_KEY, account);
         setStatus("Đã cập nhật ví MetaMask.");
       } else {
@@ -124,6 +124,11 @@ export default function Create() {
       const { uuid, hash } = response;
       setStatus("Đang yêu cầu ký giao dịch...");
       const txHash = await addProductContract(uuid, hash);
+      const receipt = await txHash.wait();
+      if (receipt.status === 1) {
+      
+      }
+
 
       setStatus(`Tạo sản phẩm thành công! TxHash: ${txHash.slice(0, 10)}...`);
       setName("");
@@ -150,7 +155,6 @@ export default function Create() {
     }
   };
 
-
   return (
     <div className="min-h-[100vh] p-[24px] font-sf-pro text-[#23372e] bg-[radial-gradient(circle_at_85%_12%,rgba(41,153,104,0.2),transparent_36%),radial-gradient(circle_at_8%_20%,rgba(255,191,92,0.2),transparent_34%),linear-gradient(150deg,#f7f3e6_0%,#edf4df_52%,#e0efe7_100%)]">
       <div className="max-w-[1000px] mx-auto grid gap-[20px] animate-[fade-up_550ms_ease-out]">
@@ -160,14 +164,15 @@ export default function Create() {
               <h1 className="m-0 mb-[6px] text-[32px] md:text-[40px] text-[green] font-bold tracking-tight ">
                 Khởi tạo sản phẩm
               </h1>
-           
             </div>
             <div className="flex flex-col items-end gap-[8px]">
-               <div className="rounded-[999px] border-[1px] border-[#204a39]/20 bg-[#f0f7f2] px-[14px] py-[8px] text-[13px] text-[#2a5443] font-medium flex items-center gap-[6px]">
-                  <div className={`w-[8px] h-[8px] rounded-full ${wallet ? 'bg-green-500' : 'bg-orange-400 animate-pulse'}`}></div>
-                  {shortWallet}
-               </div>
-               {!wallet && (
+              <div className="rounded-[999px] border-[1px] border-[#204a39]/20 bg-[#f0f7f2] px-[14px] py-[8px] text-[13px] text-[#2a5443] font-medium flex items-center gap-[6px]">
+                <div
+                  className={`w-[8px] h-[8px] rounded-full ${wallet ? "bg-green-500" : "bg-orange-400 animate-pulse"}`}
+                ></div>
+                {shortWallet}
+              </div>
+              {!wallet && (
                 <button
                   className="inline-flex items-center justify-center rounded-[12px] px-[14px] py-[6px] text-[13px] font-semibold transition-all duration-180 hover:bg-[#2a875f] hover:text-white border-[1px] border-[#2a875f] text-[#2a875f]"
                   type="button"
@@ -190,18 +195,23 @@ export default function Create() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-[32px] grid gap-[28px]">
-
             <div className="grid gap-[18px]">
               <div className="flex items-center gap-[10px]">
                 <div className="bg-[#2a875f]/10 p-[10px] rounded-[10px]">
-                  <span className="text-[#2a875f] font-bold text-[14px]">01</span>
+                  <span className="text-[#2a875f] font-bold text-[14px]">
+                    01
+                  </span>
                 </div>
-                <h3 className="m-0 text-[18px] font-bold text-[#1a3a2d]">Thông tin nguồn gốc</h3>
+                <h3 className="m-0 text-[18px] font-bold text-[#1a3a2d]">
+                  Thông tin nguồn gốc
+                </h3>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[16px] p-[20px] bg-[#f9fbf9]/50 rounded-[20px] border-[1px] border-[#2a875f]/10">
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Tên sản phẩm *</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Tên sản phẩm *
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={name}
@@ -212,7 +222,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Loại sản phẩm</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Loại sản phẩm
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={productType}
@@ -222,7 +234,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Giống</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Giống
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={variety}
@@ -232,7 +246,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Nông trại / HTX</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Nông trại / HTX
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={farmName}
@@ -242,7 +258,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Tọa độ / Địa chỉ</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Tọa độ / Địa chỉ
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={location}
@@ -252,7 +270,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Đơn vị sản xuất</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Đơn vị sản xuất
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={producer}
@@ -262,7 +282,9 @@ export default function Create() {
                 </label>
 
                 <label className="grid gap-[6px] md:col-span-2 lg:col-span-3">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Vùng trồng *</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Vùng trồng *
+                  </span>
                   <input
                     className="border-[1px] border-[#295242]/15 rounded-[12px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] transition-all hover:border-[#2a875f]/40"
                     value={origin}
@@ -278,15 +300,21 @@ export default function Create() {
             <div className="grid gap-[18px]">
               <div className="flex items-center gap-[10px]">
                 <div className="bg-[#2a875f]/10 p-[10px] rounded-[10px]">
-                  <span className="text-[#2a875f] font-bold text-[14px]">02</span>
+                  <span className="text-[#2a875f] font-bold text-[14px]">
+                    02
+                  </span>
                 </div>
-                <h3 className="m-0 text-[18px] font-bold text-[#1a3a2d]">Nhật ký ban đầu</h3>
+                <h3 className="m-0 text-[18px] font-bold text-[#1a3a2d]">
+                  Nhật ký ban đầu
+                </h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
                 <div className="grid gap-[12px]">
-                    <label className="grid gap-[6px]">
-                    <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Mô tả giai đoạn gieo trồng</span>
+                  <label className="grid gap-[6px]">
+                    <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                      Mô tả giai đoạn gieo trồng
+                    </span>
                     <textarea
                       className="border-[1px] border-[#295242]/15 rounded-[20px] p-[12px] bg-white text-[#1f392f] font-inherit outline-none focus:border-[#2a875f] min-h-[160px] transition-all hover:border-[#2a875f]/40 resize-none"
                       value={description}
@@ -297,12 +325,27 @@ export default function Create() {
                 </div>
 
                 <div className="grid gap-[6px]">
-                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">Hình ảnh thực tế *</span>
+                  <span className="text-[13px] text-[#4a6d5d] font-bold uppercase tracking-wider">
+                    Hình ảnh thực tế *
+                  </span>
                   <label
                     className={`relative flex flex-col items-center justify-center border-[2px] border-dashed rounded-[20px] p-[28px] cursor-pointer transition-all duration-180 
                   ${image ? "border-[#2a875f] bg-[#f2faf5]" : "border-[#295242]/20 bg-white/50 hover:bg-white hover:border-[#2a875f]/50 shadow-sm"}`}
-                    onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("bg-[#f2faf5]", "border-[#2a875f]"); }}
-                    onDragLeave={(e) => { e.preventDefault(); if (!image) e.currentTarget.classList.remove("bg-[#f2faf5]", "border-[#2a875f]"); }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add(
+                        "bg-[#f2faf5]",
+                        "border-[#2a875f]",
+                      );
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      if (!image)
+                        e.currentTarget.classList.remove(
+                          "bg-[#f2faf5]",
+                          "border-[#2a875f]",
+                        );
+                    }}
                     onDrop={(e) => {
                       e.preventDefault();
                       const file = e.dataTransfer.files?.[0];
@@ -319,7 +362,9 @@ export default function Create() {
                       {image ? (
                         <div className="flex flex-col items-center gap-[8px]">
                           <div className="w-[48px] h-[48px] rounded-full bg-[#2a875f]/15 flex items-center justify-center">
-                            <span className="text-[#2a875f] text-[20px]">✓</span>
+                            <span className="text-[#2a875f] text-[20px]">
+                              ✓
+                            </span>
                           </div>
                           <span className="text-[#1f392f] text-[14px] font-semibold break-all max-w-[200px]">
                             {image.name}
@@ -328,12 +373,26 @@ export default function Create() {
                       ) : (
                         <>
                           <div className="w-[48px] h-[48px] rounded-full bg-[#2a875f]/5 flex items-center justify-center mx-auto mb-[10px]">
-                            <svg className="w-6 h-6 text-[#2a875f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            <svg
+                              className="w-6 h-6 text-[#2a875f]"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 4v16m8-8H4"
+                              />
                             </svg>
                           </div>
-                          <p className="m-0 text-[14px] text-[#1f392f] font-medium">Tải ảnh lên (JPG, PNG)</p>
-                          <p className="mt-[4px] mb-0 text-[12px] text-[#4a6d5d] opacity-60">Kéo thả hoặc nhấp để chọn</p>
+                          <p className="m-0 text-[14px] text-[#1f392f] font-medium">
+                            Tải ảnh lên (JPG, PNG)
+                          </p>
+                          <p className="mt-[4px] mb-0 text-[12px] text-[#4a6d5d] opacity-60">
+                            Kéo thả hoặc nhấp để chọn
+                          </p>
                         </>
                       )}
                     </div>

@@ -80,7 +80,6 @@ export const switchToFlareNetwork = async () => {
       params: [{ chainId: "0x72" }], // 114
     });
   } catch (err) {
-    // chưa có network → add luôn
     if (err.code === 4902) {
       await provider.request({
         method: "wallet_addEthereumChain",
